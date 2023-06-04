@@ -2,7 +2,7 @@ import React from 'react';
 import './App.scss';
 import EditorView from './views/EditorView/EditorView';
 import MainView from './views/MainView/MainView';
-import {ProjectType} from './data/enums/ProjectType';
+import {ProjectType, isNoProject} from './data/enums/ProjectType';
 import {AppState} from './store';
 import {connect} from 'react-redux';
 import PopupView from './views/PopupView/PopupView';
@@ -34,10 +34,11 @@ const App: React.FC<IProps> = (
         roboflowAPIDetails
     }
 ) => {
+
     const selectRoute = () => {
         if (!!PlatformModel.mobileDeviceData.manufacturer && !!PlatformModel.mobileDeviceData.os)
             return <MobileMainView/>;
-        if (!projectType)
+        if (!projectType || isNoProject(projectType))
             return <MainView/>;
         else {
             if (windowSize.height < Settings.EDITOR_MIN_HEIGHT || windowSize.width < Settings.EDITOR_MIN_WIDTH) {
@@ -47,6 +48,11 @@ const App: React.FC<IProps> = (
             }
         }
     };
+
+    const popUpView = () => {
+        return !isNoProject(projectType) && <PopupView/>
+    }
+
     const isAILoaded = isObjectDetectorLoaded
         || isPoseDetectionLoaded
         || isYOLOV5ObjectDetectorLoaded
@@ -56,7 +62,7 @@ const App: React.FC<IProps> = (
         <div className={classNames('App', {'AI': isAILoaded})} draggable={false}
         >
             {selectRoute()}
-            <PopupView/>
+            {popUpView()}
             <NotificationsView/>
         </div>
     );
