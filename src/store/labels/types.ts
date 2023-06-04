@@ -36,6 +36,7 @@ export type LabelLine = Annotation & {
 export type LabelName = {
     name: string;
     id: string;
+    isDefault?: boolean;
     color?: string;
 }
 

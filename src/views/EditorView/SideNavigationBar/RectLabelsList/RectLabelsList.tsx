@@ -104,6 +104,15 @@ const RectLabelsList: React.FC<IProps> = (
             });
     };
 
+    const getDefaultLabel = (labelNames: LabelName[]): any => {
+        for (let i:number=0;i<labelNames.length;i++) {
+            if(labelNames[i].isDefault) {
+                return labelNames[i]
+            }
+        }
+        return null
+    }
+
     return (
         <div
             className='RectLabelsList'

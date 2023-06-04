@@ -23,11 +23,49 @@
     background-color: $darkThemeFirstColor;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     align-content: center;
+
+    .Text {
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .TextButton {
+      display: block;
+      cursor: pointer;
+      user-select: none;
+      line-height: 0;
+      word-wrap: break-word;
+      padding: 15px 15px;
+      text-decoration: none;
+      box-shadow: white 0 0 0 2px inset;
+      color: white;
+      margin: initial;
+      border-radius: 2px;
+      transition: 0.3s ease-in-out;
+      background: transparent;
+      font-weight: 700;
+    
+      > a {
+        text-decoration: none;
+        color: white;
+      }
+    
+      &:hover {
+        box-shadow: inherit;
+        color: white;
+        background-color: black;
+    
+        > a {
+          text-decoration: none;
+          color: white;
+        }
+      }
+    }
   }
 
   .Content {
