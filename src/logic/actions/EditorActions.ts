@@ -117,7 +117,7 @@ export class EditorActions {
         const viewPortContentImageRect: IRect = ViewPortActions.calculateViewPortContentImageRect();
         const mousePositionOverViewPort: IPoint = PointUtil.subtract(mousePositionOverViewPortContent, viewPortContentScrollPosition);
         const isMouseOverImage: boolean = RectUtil.isPointInside(viewPortContentImageRect, mousePositionOverViewPortContent);
-        const isMouseOverViewPort: boolean = RectUtil.isPointInside({x: 0, y: 0, ...EditorModel.viewPortSize}, mousePositionOverViewPort);
+        const isMouseOverViewPort: boolean = RectUtil.isPointInside({x: 0, y: 0, ...EditorModel.viewPortSize, rotation: 0}, mousePositionOverViewPort);
 
         if (isMouseOverViewPort && !GeneralSelector.getPreventCustomCursorStatus()) {
             EditorModel.cursor.style.left = mousePositionOverViewPort.x + "px";

@@ -20,7 +20,7 @@ export class RenderEngineUtil {
     }
 
     public static isMouseOverCanvas(data: EditorData): boolean {
-        return RectUtil.isPointInside({x: 0, y: 0, ...data.viewPortContentSize}, data.mousePositionOnViewPortContent);
+        return RectUtil.isPointInside({x: 0, y: 0, ...data.viewPortContentSize, rotation: 0}, data.mousePositionOnViewPortContent);
     }
 
     public static transferPointFromImageToViewPortContent(point: IPoint, data: EditorData): IPoint {
@@ -104,7 +104,8 @@ export class RenderEngineUtil {
             x: topLeftBetweenPixels.x,
             y: topLeftBetweenPixels.y,
             width: bottomRightBetweenPixels.x - topLeftBetweenPixels.x,
-            height: bottomRightBetweenPixels.y - topLeftBetweenPixels.y
+            height: bottomRightBetweenPixels.y - topLeftBetweenPixels.y,
+            rotation: rect.rotation
         }
     }
 

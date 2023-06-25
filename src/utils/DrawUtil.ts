@@ -29,6 +29,9 @@ export class DrawUtil {
         ctx.strokeStyle = color;
         ctx.lineWidth = thickness;
         ctx.beginPath();
+        ctx.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        ctx.rotate(rect.rotation);
+        ctx.translate(-(rect.x + rect.width / 2), -(rect.y + rect.height / 2));
         ctx.rect(rect.x, rect.y, rect.width, rect.height);
         ctx.stroke();
         ctx.restore();
@@ -39,6 +42,9 @@ export class DrawUtil {
         ctx.save();
         ctx.fillStyle = color;
         ctx.beginPath();
+        ctx.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        ctx.rotate(rect.rotation);
+        ctx.translate(-(rect.x + rect.width / 2), -(rect.y + rect.height / 2));
         ctx.rect(rect.x, rect.y, rect.width, rect.height);
         ctx.fill();
         ctx.restore();

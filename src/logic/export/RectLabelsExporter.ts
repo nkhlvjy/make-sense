@@ -94,6 +94,7 @@ export class RectLabelsExporter {
             Math.round(labelRect.rect.y).toString(),
             Math.round(labelRect.rect.width).toString(),
             Math.round(labelRect.rect.height).toString(),
+            labelRect.rect.rotation?labelRect.rect.rotation.toPrecision(2).toString(): '0',
             imageName,
             imageSize.width.toString(),
             imageSize.height.toString()

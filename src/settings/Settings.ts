@@ -72,6 +72,7 @@ export class Settings {
         'bbox_y',
         'bbox_width',
         'bbox_height',
+        'bbox_rotation',
         'image_name',
         'image_width',
         'image_height'
