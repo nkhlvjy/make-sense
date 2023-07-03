@@ -131,7 +131,7 @@ export class RectRenderEngine extends BaseRenderEngine {
                 debugger
                 const rect: IRect = this.calculateRectRelativeToActiveImage(activeLabelRect.rect, data);
                 const startAnchorPosition: IPoint = PointUtil.add(this.startRotateRectAnchor.position, data.viewPortContentImageRect);
-                const rectCenter : IPoint = {x: startAnchorPosition.x, y: startAnchorPosition.y - rect.height/2}
+                const rectCenter : IPoint = {x: startAnchorPosition.x, y: startAnchorPosition.y + rect.height/2}
                 const endAnchorPositionSnapped: IPoint = RectUtil.snapPointToRect(data.mousePositionOnViewPortContent, data.viewPortContentImageRect);
                 const deltaTheta = PointUtil.getThetaFromVertical(endAnchorPositionSnapped, rectCenter);
                 const rotatedRect: IRect = {...rect, rotation: rect.rotation+deltaTheta}
@@ -251,9 +251,9 @@ export class RectRenderEngine extends BaseRenderEngine {
         if (!!this.startRotateRectAnchor) {
             const startAnchorPosition: IPoint = PointUtil.add(this.startRotateRectAnchor.position, data.viewPortContentImageRect);
             const endAnchorPositionSnapped: IPoint = RectUtil.snapPointToRect(data.mousePositionOnViewPortContent, data.viewPortContentImageRect);
-            const rectCenter : IPoint = {x: startAnchorPosition.x, y: startAnchorPosition.y - labelRect.rect.height/2}
+            const rectCenter : IPoint = {x: startAnchorPosition.x, y: startAnchorPosition.y + labelRect.rect.height/2}
             const deltaTheta = PointUtil.getThetaFromVertical(endAnchorPositionSnapped, rectCenter);
-            rect.rotation = deltaTheta
+            rect = {...rect, rotation: rect.rotation+deltaTheta}
         }
         if (!!this.startRectMovePoint) {
             const startPoint: IPoint = this.startRectMovePoint;

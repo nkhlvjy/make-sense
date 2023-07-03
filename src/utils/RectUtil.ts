@@ -25,11 +25,12 @@ export class RectUtil {
 
     public static isPointInside(rect: IRect, point: IPoint): boolean {
         if (!rect || !point) return null;
+        const newPoint = RectUtil.rotatePoint(point, {x: rect.x+(rect.width*0.5), y: rect.y+(rect.height*0.5)}, (0-rect.rotation))
         return (
-            rect.x <= point.x &&
-            rect.x + rect.width >= point.x &&
-            rect.y <= point.y &&
-            rect.y + rect.height >= point.y
+            rect.x <= newPoint.x &&
+            rect.x + rect.width >= newPoint.x &&
+            rect.y <= newPoint.y &&
+            rect.y + rect.height >= newPoint.y
         )
     }
 
@@ -156,7 +157,7 @@ export class RectUtil {
             y: rect.y - delta.y,
             width: rect.width + 2 * delta.x,
             height: rect.height + 2 * delta.y,
-            rotation: 0
+            rotation: rect.rotation
         }
     }
 

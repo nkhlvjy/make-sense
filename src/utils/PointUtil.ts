@@ -30,6 +30,6 @@ export class PointUtil {
     static getThetaFromVertical(p1: IPoint, p2: IPoint): number {
         const base = p1.x - p2.x;
         const height = p1.y - p2.y;
-        return Math.atan(height/base)-(Math.PI/2);
+        return (Math.PI/2) - Math.atan(height/base);
     }
 }
