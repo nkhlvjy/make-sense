@@ -39,6 +39,7 @@ interface IProps {
     customCursorStyle: CustomCursorStyle;
     imageDragMode: boolean;
     zoom: number;
+    activeImageIndex: number;
 }
 
 interface IState {
@@ -274,6 +275,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state: AppState) => ({
     activeLabelType: state.labels.activeLabelType,
+    activeImageIndex: state.labels.activeImageIndex,
     activePopupType: state.general.activePopupType,
     activeLabelId: state.labels.activeLabelId,
     customCursorStyle: state.general.customCursorStyle,

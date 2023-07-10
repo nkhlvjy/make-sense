@@ -70,8 +70,10 @@ export type LabelsState = {
     activeLabelId: string | null;
     highlightedLabelId: string;
     imagesData: ImageData[];
+    data: any;
     firstLabelCreatedFlag: boolean;
     labels: LabelName[];
+    videoFrame: number;
 }
 
 interface UpdateActiveImageIndex {
@@ -124,6 +126,13 @@ interface AddImageData {
     }
 }
 
+interface AddData {
+    type: typeof Action.ADD_DATA;
+    payload: {
+        data: any;
+    }
+}
+
 interface UpdateImageData {
     type: typeof Action.UPDATE_IMAGES_DATA;
     payload: {
@@ -145,6 +154,13 @@ interface UpdateFirstLabelCreatedFlag {
     }
 }
 
+interface UpdateVideoFrame {
+    type: typeof Action.UPDATE_VIDEO_FRAME;
+    payload: {
+        frameNo: number;
+    }
+}
+
 export type LabelsActionTypes = UpdateActiveImageIndex
     | UpdateActiveLabelNameId
     | UpdateActiveLabelType
@@ -155,4 +171,5 @@ export type LabelsActionTypes = UpdateActiveImageIndex
     | UpdateActiveLabelId
     | UpdateHighlightedLabelId
     | UpdateFirstLabelCreatedFlag
-
+    | AddData
+    | UpdateVideoFrame
