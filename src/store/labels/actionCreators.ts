@@ -66,6 +66,15 @@ export function addImageData(imageData: ImageData[]): LabelsActionTypes {
     };
 }
 
+export function addData(data: any): LabelsActionTypes {
+    return {
+        type: Action.ADD_DATA,
+        payload: {
+            data,
+        },
+    };
+}
+
 export function updateImageData(imageData: ImageData[]): LabelsActionTypes {
     return {
         type: Action.UPDATE_IMAGES_DATA,
@@ -89,6 +98,15 @@ export function updateFirstLabelCreatedFlag(firstLabelCreatedFlag: boolean): Lab
         type: Action.UPDATE_FIRST_LABEL_CREATED_FLAG,
         payload: {
             firstLabelCreatedFlag
+        }
+    }
+}
+
+export function updateVideoFrame(frameNo: number): LabelsActionTypes {
+    return {
+        type: Action.UPDATE_VIDEO_FRAME,
+        payload: {
+            frameNo,
         }
     }
 }

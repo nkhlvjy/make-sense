@@ -25,6 +25,10 @@ export class LabelsSelector {
         return store.getState().labels.imagesData;
     }
 
+    public static getData(): any {
+        return store.getState().labels.data;
+    }
+
     public static getActiveImageIndex(): number {
         return store.getState().labels.activeImageIndex;
     }
@@ -35,12 +39,21 @@ export class LabelsSelector {
         if (activeImageIndex === null)
             return null;
 
-        return LabelsSelector.getImageDataByIndex(activeImageIndex);
+        return LabelsSelector.getDataByIndex(activeImageIndex)
     }
 
     public static getImageDataByIndex(index: number): ImageData {
         const imagesData: ImageData[] = LabelsSelector.getImagesData();
         return imagesData[index];
+    }
+
+    public static getDataByIndex(index: number): ImageData {
+        const frameNo = store.getState().labels.videoFrame
+        if (Array.isArray(LabelsSelector.getData()[index])) {
+            return LabelsSelector.getData()[index][frameNo];
+        }
+        return LabelsSelector.getData()[index];
+        
     }
 
     public static getImageDataById(id: string): ImageData {

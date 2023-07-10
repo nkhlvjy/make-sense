@@ -1,46 +1,68 @@
-import React, {PropsWithChildren} from 'react';
-import './ImagesDropZone.scss';
-import {useDropzone,DropzoneOptions} from 'react-dropzone';
-import {TextButton} from '../../Common/TextButton/TextButton';
-import {ImageData} from '../../../store/labels/types';
-import {connect} from 'react-redux';
-import {addImageData, updateActiveImageIndex} from '../../../store/labels/actionCreators';
-import {AppState} from '../../../store';
-import {ProjectType} from '../../../data/enums/ProjectType';
-import {PopupWindowType} from '../../../data/enums/PopupWindowType';
-import {updateActivePopupType, updateProjectData} from '../../../store/general/actionCreators';
-import {ProjectData} from '../../../store/general/types';
-import {ImageDataUtil} from '../../../utils/ImageDataUtil';
-import { sortBy } from 'lodash';
+import React, { PropsWithChildren } from "react";
+import "./ImagesDropZone.scss";
+import { useDropzone, DropzoneOptions } from "react-dropzone";
+import { TextButton } from "../../Common/TextButton/TextButton";
+import { ImageData } from "../../../store/labels/types";
+import { connect } from "react-redux";
+import {
+    addData,
+  addImageData,
+  updateActiveImageIndex,
+} from "../../../store/labels/actionCreators";
+import { AppState } from "../../../store";
+import { ProjectType } from "../../../data/enums/ProjectType";
+import { PopupWindowType } from "../../../data/enums/PopupWindowType";
+import {
+  updateActivePopupType,
+  updateProjectData,
+} from "../../../store/general/actionCreators";
+import { ProjectData } from "../../../store/general/types";
+import { sortBy } from "lodash";
+import { VideoDataUtil } from "../../../utils/VideoDataUtil";
+import { ImageDataUtil } from "../../../utils/ImageDataUtil";
 
 interface IProps {
-    updateActiveImageIndexAction: (activeImageIndex: number) => any;
-    addImageDataAction: (imageData: ImageData[]) => any;
-    updateProjectDataAction: (projectData: ProjectData) => any;
-    updateActivePopupTypeAction: (activePopupType: PopupWindowType) => any;
-    projectData: ProjectData;
+  updateActiveImageIndexAction: (activeImageIndex: number) => any;
+  addImageDataAction: (imageData: ImageData[]) => any;
+  addVideoDataAction: (imageData: ImageData[][]) => any;
+  addDataAction: (data: any) => any;
+  updateProjectDataAction: (projectData: ProjectData) => any;
+  updateActivePopupTypeAction: (activePopupType: PopupWindowType) => any;
+  projectData: ProjectData;
 }
 
 const ImagesDropZone: React.FC<IProps> = (props: PropsWithChildren<IProps>) => {
-    const {acceptedFiles, getRootProps, getInputProps} = useDropzone({
-        accept: {
-            'image/*': ['.jpeg', '.png']
-        }
-    } as DropzoneOptions);
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    accept: {
+      "image/*": [".jpeg", ".png"],
+      "video/*": [".mp4", ".webm"],
+    },
+  } as DropzoneOptions);
 
-    const startEditor = (projectType: ProjectType) => {
-        if (acceptedFiles.length > 0) {
-            const files = sortBy(acceptedFiles, (item: File) => item.name)
-            props.updateProjectDataAction({
-                ...props.projectData,
-                type: projectType
-            });
-            props.updateActiveImageIndexAction(0);
-            props.addImageDataAction(files.map((file:File) => ImageDataUtil
+  const startEditor = async (projectType: ProjectType) => {
+    if (acceptedFiles.length > 0) {
+      const files = sortBy(acceptedFiles, (item: File) => item.name);
+      let filteredMp4Files = files.filter(checkTypeMp4)
+        
+      const updatedVideoArray = await Promise.all(
+        filteredMp4Files.map(
+            async (file: File) =>
+              await VideoDataUtil.createVideoDataFromFileData(file)
+          )
+      );
+      const videoArray = updatedVideoArray
+      let filteredImageFiles = files.filter(checkTypeImage)
+      props.addDataAction(filteredImageFiles.map((file:File) => ImageDataUtil
                 .createImageDataFromFileData(file)));
-            props.updateActivePopupTypeAction(PopupWindowType.INSERT_LABEL_NAMES);
-        }
-    };
+      props.addDataAction(videoArray);
+      props.updateProjectDataAction({
+        ...props.projectData,
+        type: projectType,
+      });
+      props.updateActiveImageIndexAction(0);
+      props.updateActivePopupTypeAction(PopupWindowType.INSERT_LABEL_NAMES);
+    }
+  };
 
     const getDropZoneContent = () => {
         if (acceptedFiles.length === 0)
@@ -101,9 +123,26 @@ const ImagesDropZone: React.FC<IProps> = (props: PropsWithChildren<IProps>) => {
     )
 };
 
+function checkTypeMp4(file: File) {
+    if (file.type === 'video/mp4') {
+        return true
+    } else {
+        return false
+    }
+}
+
+function checkTypeImage(file: File) {
+    if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+        return true
+    } else {
+        return false
+    }
+}
+
 const mapDispatchToProps = {
     updateActiveImageIndexAction: updateActiveImageIndex,
     addImageDataAction: addImageData,
+    addDataAction: addData,
     updateProjectDataAction: updateProjectData,
     updateActivePopupTypeAction: updateActivePopupType
 };

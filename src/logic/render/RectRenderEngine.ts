@@ -128,7 +128,6 @@ export class RectRenderEngine extends BaseRenderEngine {
             }
 
             if (!!this.startRotateRectAnchor && !!activeLabelRect) {
-                debugger
                 const rect: IRect = this.calculateRectRelativeToActiveImage(activeLabelRect.rect, data);
                 const startAnchorPosition: IPoint = PointUtil.add(this.startRotateRectAnchor.position, data.viewPortContentImageRect);
                 const rectCenter : IPoint = {x: startAnchorPosition.x, y: startAnchorPosition.y + rect.height/2}

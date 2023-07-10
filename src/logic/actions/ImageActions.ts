@@ -33,7 +33,7 @@ export class ImageActions {
   public static getImageByIndex(index: number): void {
     if (EditorModel.viewPortActionsDisabled) return;
 
-    const imageCount: number = LabelsSelector.getImagesData().length;
+    const imageCount: number = LabelsSelector.getData().length;
 
     if (index < 0 || index > imageCount - 1) {
       return;

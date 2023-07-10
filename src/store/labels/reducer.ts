@@ -8,8 +8,10 @@ const initialState: LabelsState = {
     activeLabelId: null,
     highlightedLabelId: null,
     imagesData: [],
+    data: [],
     firstLabelCreatedFlag: false,
-    labels: []
+    labels: [],
+    videoFrame: 0
 };
 
 export function labelsReducer(
@@ -61,6 +63,12 @@ export function labelsReducer(
                 imagesData: state.imagesData.concat(action.payload.imageData)
             }
         }
+        case Action.ADD_DATA: {
+            return {
+                ...state,
+                data: state.data.concat(action.payload.data)
+            }
+        }
         case Action.UPDATE_IMAGES_DATA: {
             return {
                 ...state,
@@ -77,6 +85,12 @@ export function labelsReducer(
             return {
                 ...state,
                 firstLabelCreatedFlag: action.payload.firstLabelCreatedFlag
+            }
+        }
+        case Action.UPDATE_VIDEO_FRAME: {
+            return {
+                ...state,
+                videoFrame: action.payload.frameNo
             }
         }
         default:
