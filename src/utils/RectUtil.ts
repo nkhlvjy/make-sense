@@ -4,6 +4,7 @@ import {ISize} from '../interfaces/ISize';
 import {RectAnchor} from '../data/RectAnchor';
 import {NumberUtil} from './NumberUtil';
 import {Direction} from '../data/enums/Direction';
+import { LabelRect } from 'src/store/labels/types';
 
 export class RectUtil {
     public static getRatio(rect: IRect): number {
@@ -24,18 +25,20 @@ export class RectUtil {
 
     public static isPointInside(rect: IRect, point: IPoint): boolean {
         if (!rect || !point) return null;
+        const newPoint = RectUtil.rotatePoint(point, {x: rect.x+(rect.width*0.5), y: rect.y+(rect.height*0.5)}, (0-rect.rotation))
         return (
-            rect.x <= point.x &&
-            rect.x + rect.width >= point.x &&
-            rect.y <= point.y &&
-            rect.y + rect.height >= point.y
+            rect.x <= newPoint.x &&
+            rect.x + rect.width >= newPoint.x &&
+            rect.y <= newPoint.y &&
+            rect.y + rect.height >= newPoint.y
         )
     }
 
-    public static getRectWithCenterAndSize(centerPoint: IPoint, size: ISize): IRect {
+    public static getRectWithCenterAndSize(centerPoint: IPoint, size: ISize, rotation: number): IRect {
         return {
             x: centerPoint.x - 0.5 * size.width,
             y: centerPoint.y - 0.5 * size.height,
+            rotation: rotation,
             ...size
         }
     }
@@ -47,6 +50,7 @@ export class RectUtil {
             return {
                 x: containerRect.x,
                 y: containerRect.y + (containerRect.height - innerRectHeight) / 2,
+                rotation: 0,
                 width: containerRect.width,
                 height: innerRectHeight
             }
@@ -57,7 +61,8 @@ export class RectUtil {
                 x: containerRect.x + (containerRect.width - innerRectWidth) / 2,
                 y: containerRect.y,
                 width: innerRectWidth,
-                height: containerRect.height
+                height: containerRect.height,
+                rotation: 0
             }
         }
     }
@@ -77,10 +82,6 @@ export class RectUtil {
                 break;
             case Direction.TOP_RIGHT:
                 rect.width += delta.x;
-                rect.y += delta.y;
-                rect.height -= delta.y;
-                break;
-            case Direction.TOP:
                 rect.y += delta.y;
                 rect.height -= delta.y;
                 break;
@@ -122,12 +123,41 @@ export class RectUtil {
         }
     }
 
+    public static areOverlapping(labelRect: LabelRect, rectangle: IRect) {
+        let x1 = labelRect.rect.x
+        let x2 = labelRect.rect.x +labelRect.rect.width
+        let y1 = labelRect.rect.y
+        let y2 = labelRect.rect.y +labelRect.rect.height
+        let X1 = RectUtil.getMin(x1,x2)
+        let X2 = RectUtil.getMax(x1,x2)
+        let Y1 = RectUtil.getMin(y1,y2)
+        let Y2 = RectUtil.getMax(y1,y2)
+        let a1 = rectangle.x
+        let a2 = rectangle.x + rectangle.width
+        let b1 = rectangle.y
+        let b2 = rectangle.y + rectangle.height
+        let A1 = RectUtil.getMin(a1,a2)
+        let A2 = RectUtil.getMax(a1,a2)
+        let B1 = RectUtil.getMin(b1,b2)
+        let B2 = RectUtil.getMax(b1,b2)
+        return !(A1>X2 || A2<X1 || Y1>B2 || Y2<B1) 
+    }
+
+    public static getMax(x1: number, x2: number) {
+        return x1<x2?x2:x1
+    }
+
+    public static getMin(x1: number, x2: number) {
+        return x1<x2?x1:x2
+    }
+
     public static expand(rect: IRect, delta: IPoint): IRect {
         return {
             x: rect.x - delta.x,
             y: rect.y - delta.y,
             width: rect.width + 2 * delta.x,
-            height: rect.height + 2 * delta.y
+            height: rect.height + 2 * delta.y,
+            rotation: rect.rotation
         }
     }
 
@@ -136,22 +166,40 @@ export class RectUtil {
             x: rect.x * scale,
             y: rect.y * scale,
             width: rect.width * scale,
-            height: rect.height * scale
+            height: rect.height * scale,
+            rotation: rect.rotation
         }
     }
 
     public static mapRectToAnchors(rect: IRect): RectAnchor[] {
+        const center: IPoint = {x: rect.x+ 0.5 * rect.width, y: rect.y + 0.5 * rect.height}
         return [
-            {type: Direction.TOP_LEFT, position: {x: rect.x, y: rect.y}},
-            {type: Direction.TOP, position: {x: rect.x + 0.5 * rect.width, y: rect.y}},
-            {type: Direction.TOP_RIGHT, position: {x: rect.x + rect.width, y: rect.y}},
-            {type: Direction.LEFT, position: {x: rect.x, y: rect.y + 0.5 * rect.height}},
-            {type: Direction.RIGHT, position: {x: rect.x + rect.width, y: rect.y + 0.5 * rect.height}},
-            {type: Direction.BOTTOM_LEFT, position: {x: rect.x, y: rect.y + rect.height}},
-            {type: Direction.BOTTOM, position: {x: rect.x + 0.5 * rect.width, y: rect.y + rect.height}},
-            {type: Direction.BOTTOM_RIGHT, position: {x: rect.x + rect.width, y: rect.y + rect.height}}
+            {type: Direction.TOP_LEFT, position: RectUtil.rotatePoint({x: rect.x, y: rect.y}, center, rect.rotation)},
+            {type: Direction.TOP, position: RectUtil.rotatePoint({x: rect.x + 0.5 * rect.width, y: rect.y}, center, rect.rotation)},
+            {type: Direction.TOP_RIGHT, position: RectUtil.rotatePoint({x: rect.x + rect.width, y: rect.y}, center, rect.rotation)},
+            {type: Direction.LEFT, position: RectUtil.rotatePoint({x: rect.x, y: rect.y + 0.5 * rect.height}, center, rect.rotation)},
+            {type: Direction.RIGHT, position: RectUtil.rotatePoint({x: rect.x + rect.width, y: rect.y + 0.5 * rect.height}, center, rect.rotation)},
+            {type: Direction.BOTTOM_LEFT, position: RectUtil.rotatePoint({x: rect.x, y: rect.y + rect.height}, center, rect.rotation)},
+            {type: Direction.BOTTOM, position: RectUtil.rotatePoint({x: rect.x + 0.5 * rect.width, y: rect.y + rect.height}, center, rect.rotation)},
+            {type: Direction.BOTTOM_RIGHT, position: RectUtil.rotatePoint({x: rect.x + rect.width, y: rect.y + rect.height}, center, rect.rotation)}
         ]
     }
+
+    public static rotatePoint(point: IPoint, center: IPoint, angle: number) {
+        var cosTheta = Math.cos(angle);
+        var sinTheta = Math.sin(angle);
+      
+        var translatedX = point.x - center.x;
+        var translatedY = point.y - center.y;
+      
+        var rotatedX = translatedX * cosTheta - translatedY * sinTheta;
+        var rotatedY = translatedX * sinTheta + translatedY * cosTheta;
+      
+        var finalX = rotatedX + center.x;
+        var finalY = rotatedY + center.y;
+      
+        return { x: finalX, y: finalY };
+      }
 
     public static snapPointToRect(point: IPoint, rect: IRect): IPoint {
         if (RectUtil.isPointInside(rect, point))
